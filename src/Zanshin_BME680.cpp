@@ -27,9 +27,9 @@ const uint8_t BME680_MEASURING_BIT_POSITION{5};        ///< Bit position for mea
 const uint8_t BME680_I2C_MIN_ADDRESS{0x76};            ///< Minimum possible address for BME680
 const uint8_t BME680_I2C_MAX_ADDRESS{0x77};            ///< Minimum possible address for BME680
 const uint8_t BME680_SPI_MEM_PAGE_POSITION{4};         ///< Bit position for memory page value
-const uint8_t BME680_HUMIDITY_MASK{0xF8};              ///< Mask is binary B11111000
-const uint8_t BME680_PRESSURE_MASK{0xE3};              ///< Mask is binary B11100011
-const uint8_t BME680_TEMPERATURE_MASK{0x1F};           ///< Mask is binary B00011111
+const uint8_t BME680_HUMIDITY_MASK{0xF8};              ///< Mask is binary 0b11111000
+const uint8_t BME680_PRESSURE_MASK{0xE3};              ///< Mask is binary 0b11100011
+const uint8_t BME680_TEMPERATURE_MASK{0x1F};           ///< Mask is binary 0b00011111
 /***************************************************************************************************
 ** Declare the constants used for calibration                                                     **
 ***************************************************************************************************/
@@ -369,11 +369,11 @@ uint8_t BME680_Class::setIIRFilter(const uint8_t iirFilterSetting) const {
   uint8_t returnValue = readByte(BME680_CONFIG_REGISTER);  // Get control register byte contents
   if (iirFilterSetting != UINT8_MAX)                       // If the value is to be changed
   {                                                        //
-    returnValue = returnValue & B11100011;                 // mask IIR bits
-    returnValue |= (iirFilterSetting & B00000111) << 2;    // use 3 bits of iirFilterSetting
+    returnValue = returnValue & 0b11100011;                 // mask IIR bits
+    returnValue |= (iirFilterSetting & 0b00000111) << 2;    // use 3 bits of iirFilterSetting
     putData(BME680_CONFIG_REGISTER, returnValue);          // Write new control register value
   }  // if the value is to be changed                                   //
-  returnValue = (returnValue >> 2) & B00000111;  // Extract IIR filter setting from register
+  returnValue = (returnValue >> 2) & 0b00000111;  // Extract IIR filter setting from register
   return (returnValue);                          // Return IIR Filter setting
 }  // of method setIIRFilter()
 uint8_t BME680_Class::getSensorData(int32_t& temp, int32_t& hum, int32_t& press, int32_t& gas,
@@ -520,9 +520,9 @@ bool BME680_Class::setGas(uint16_t GasTemp, uint16_t GasMillis) const {
   uint8_t gasRegister = readByte(BME680_CONTROL_GAS_REGISTER2);  // Read current register values
   if (GasTemp == 0 || GasMillis == 0) {
     // If either input variable is zero //
-    putData(BME680_CONTROL_GAS_REGISTER1, (uint8_t)B00001000);  // Turn off gas heater
+    putData(BME680_CONTROL_GAS_REGISTER1, (uint8_t)0b00001000);  // Turn off gas heater
     putData(BME680_CONTROL_GAS_REGISTER2,
-            (uint8_t)(gasRegister & B11101111));  // Turn off gas measurements
+            (uint8_t)(gasRegister & 0b11101111));  // Turn off gas measurements
   } else {
     putData(BME680_CONTROL_GAS_REGISTER1, (uint8_t)0);  // Turn off heater bit to turn on
     uint8_t heatr_res;
@@ -553,7 +553,7 @@ bool BME680_Class::setGas(uint16_t GasTemp, uint16_t GasMillis) const {
     }                                                   // of if-then-else duration exceeds max
     putData(BME680_CONTROL_GAS_REGISTER1, (uint8_t)0);  // then turn off gas heater
     putData(BME680_GAS_DURATION_REGISTER0, durval);
-    putData(BME680_CONTROL_GAS_REGISTER2, (uint8_t)(gasRegister | B00010000));
+    putData(BME680_CONTROL_GAS_REGISTER2, (uint8_t)(gasRegister | 0b00010000));
   }  // of if-then-else turn gas measurements on or off
   return true;
 }  // of method setGas()
